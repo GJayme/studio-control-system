@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 
 
 class Aluno(models.Model):
+    # Aluno Gender Choises
     male = "Masculino"
     female = "Feminino"
     GENDER_CHOICES = [
@@ -11,20 +12,6 @@ class Aluno(models.Model):
         (female, "Feminino"),
     ]
 
-    name = models.CharField(max_length=255)
-    date_of_birthday = models.DateField(auto_now_add=False, auto_now=False)
-    telephone = models.CharField(max_length=11)
-    email = models.EmailField(max_length=255)
-    cpf = models.CharField(max_length=14, unique=True)
-    gender = models.CharField(
-        max_length=10, choices=GENDER_CHOICES, default=female)
-    address = models.CharField(max_length=255)
-
-    def __str__(self):
-        return "O aluno {} foi cadastrado!".format(self.name)
-
-
-class Anamnese(models.Model):
     wigth_loss = "Emagrecimento"
     hypertrophy = "Hipertrofia"
     muscle_strengthening = "Fortalecimento"
@@ -37,10 +24,18 @@ class Anamnese(models.Model):
         (muscle_endurance, "Resistência"),
         (muscle_strength, "Força")
     ]
+
+    name = models.CharField(max_length=255)
+    date_of_birthday = models.DateField(auto_now_add=False, auto_now=False)
+    telephone = models.CharField(max_length=11)
+    email = models.EmailField(max_length=255)
+    cpf = models.CharField(max_length=14, unique=True)
+    gender = models.CharField(
+        max_length=10, choices=GENDER_CHOICES, default=female)
+    address = models.CharField(max_length=255)
+
     weight = models.DecimalField(max_digits=5, decimal_places=2)
     height = models.DecimalField(max_digits=5, decimal_places=2)
-    imc = models.DecimalField(
-        max_digits=5, decimal_places=2, null=True, blank=True)
     has_pathology = models.BooleanField(default=False)
     pathology = models.TextField(null=True, blank=True)
     use_medicine = models.BooleanField(default=False)
@@ -57,20 +52,4 @@ class Anamnese(models.Model):
     meals_day = models.IntegerField()
 
     def __str__(self):
-        return "Anamnese cadastrada!"
-
-    def save(self, *args, **kwargs):
-        self.clean()
-        return super(Anamnese, self).save(*args, **kwargs)
-
-    def clean(self):
-        try:
-            weight = self.weight
-            height = self.height
-            imc = (weight/(height)**2)*10000
-
-            self.imc = imc
-            print(self.imc)
-            super(Anamnese, self).clean()
-        except:
-            raise ValidationError("Erro ao calcular o IMC!")
+        return self.name
